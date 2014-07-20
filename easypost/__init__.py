@@ -1,15 +1,15 @@
 # imports
 import platform
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import time
 import datetime
 import types
 import re
 import string
 
-from version import VERSION
-import importer
+from .version import VERSION
+from . import importer
 json = importer.import_json()
 
 # use urlfetch as request_lib on google app engine, otherwise use requests
@@ -90,7 +90,7 @@ def convert_to_easypost_object(response, api_key):
     response = response.copy()
     cls_name = response.get('object', EasyPostObject)
     cls_id = response.get('id', None)
-    if isinstance(cls_name, basestring):
+    if isinstance(cls_name, str):
       cls = types.get(cls_name, EasyPostObject)
     elif cls_id != None:
       cls = prefixes.get(cls_id[0:cls_id.find('_')], EasyPostObject)
@@ -110,7 +110,7 @@ class Requestor(object):
 
   @classmethod
   def _utf8(cls, value):
-    if isinstance(value, unicode):
+    if isinstance(value, str):
       return value.encode('utf-8')
     else:
       return value
@@ -118,7 +118,7 @@ class Requestor(object):
   @classmethod
   def encode_dict(cls, out, key, dict_value):
     n = {}
-    for k, v in dict_value.iteritems():
+    for k, v in dict_value.items():
       k = cls._utf8(k)
       v = cls._utf8(v)
       n["%s[%s]" % (key, k)] = v
@@ -148,11 +148,11 @@ class Requestor(object):
       list: cls.encode_list,
       dict: cls.encode_dict,
       datetime.datetime: cls.encode_datetime,
-      types.NoneType: cls.encode_none,
+      type(None): cls.encode_none,
     }
 
     out = []
-    for key, value in params.iteritems():
+    for key, value in params.items():
       key = cls._utf8(key)
       try:
           encoder = ENCODERS[value.__class__]
@@ -160,7 +160,7 @@ class Requestor(object):
       except KeyError:
         # don't need special encoding
         try:
-          value = unicode(value)
+          value = str(value)
         except:
           pass
 
@@ -173,7 +173,7 @@ class Requestor(object):
       return {'id': param.id}
     elif isinstance(param, dict):
       out = {}
-      for k, v in param.iteritems():
+      for k, v in param.items():
         out[k] = cls._objects_to_ids(v)
       return out
     elif isinstance(param, list):
@@ -186,11 +186,11 @@ class Requestor(object):
 
   @classmethod
   def encode(cls, params):
-    return urllib.urlencode(cls._encode_inner(params))
+    return urllib.parse.urlencode(cls._encode_inner(params))
 
   @classmethod
   def build_url(cls, url, params):
-    base_query = urlparse.urlparse(url).query
+    base_query = urllib.parse.urlparse(url).query
     if base_query:
       return '%s&%s' % (url, cls.encode(params))
     else:
@@ -350,10 +350,10 @@ class EasyPostObject(object):
     setattr(self, k, v)
 
   def keys(self):
-    return self._values.keys()
+    return list(self._values.keys())
 
   def values(self):
-    return self._values.keys()
+    return list(self._values.keys())
 
   @classmethod
   def construct_from(cls, values, api_key):
@@ -364,7 +364,7 @@ class EasyPostObject(object):
   def refresh_from(self, values, api_key):
     self.api_key = api_key
 
-    for k, v in values.iteritems():
+    for k, v in values.items():
       if k in self._immutable_values:
         continue
       self.__dict__[k] = convert_to_easypost_object(v, api_key)
@@ -376,10 +376,10 @@ class EasyPostObject(object):
     type_string = ''
     id_string = ''
 
-    if isinstance(self.get('id'), basestring):
+    if isinstance(self.get('id'), str):
       id_string = ' id=%s' % self.get('id').encode('utf8')
 
-    if isinstance(self.get('object'), basestring):
+    if isinstance(self.get('object'), str):
       type_string = ' %s' % self.get('object').encode('utf8')
 
     return '<%s%s at %s> JSON: %s' % (type(self).__name__, type_string, hex(id(self)), json.dumps(self.to_dict(), sort_keys=True, indent=2, cls=EasyPostObjectEncoder))
@@ -454,7 +454,7 @@ class Resource(EasyPostObject):
       raise Error('%s instance has invalid ID: %r' % (type(self).__name__, id))
     id = Requestor._utf8(id)
     base = self.class_url()
-    param = urllib.quote_plus(id)
+    param = urllib.parse.quote_plus(id)
     return "%s/%s" % (base, param)
 
 # parent resource classes
@@ -600,13 +600,13 @@ class Shipment(AllResource, CreateResource):
       carriers = carriers.split(',')
     except AttributeError:
       pass
-    carriers = map(string.lower, carriers)
+    carriers = list(map(string.lower, carriers))
 
     try:
       services = services.split(',')
     except AttributeError:
       pass
-    services = map(string.lower, services)
+    services = list(map(string.lower, services))
 
     for rate in self.rates:
       rate_carrier = rate.carrier.lower()
