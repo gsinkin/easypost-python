@@ -1,6 +1,12 @@
-# EasyPost Python Client Library
+# EasyPost Python 3 Client Library
 
 EasyPost is a simple shipping API. You can sign up for an account at https://easypost.com
+
+NOTE
+----
+
+This was a quick hack to get Python3 support up and running. Please either open an issue or submit a PR for bugs, issues, etc.
+
 
 Requirements
 ------------
@@ -10,16 +16,12 @@ Requirements
 Installation
 ------------
 
-You can install easypost via pip with:
+You can clone the EasyPost python client repository:
 
-    pip install easypost
-
-Alternatively, you can clone the EasyPost python client repository:
-
-    git clone https://github.com/EasyPost/easypost-python
+    git clone https://github.com/gsinkin/easypost-python
 
 Install:
-    
+
     python setup.py install
 
 Import the EasyPost client:
