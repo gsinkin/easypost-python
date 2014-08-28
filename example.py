@@ -1,6 +1,6 @@
 import easypost
 easypost.api_key = 'cueqNZUb3ldeWTNX7MU3Mel8UXtaAMUi'
-# easypost.api_base = 'http://localhost:5000/v2'
+easypost.api_base = 'http://ep-vm-whatever:5000/v2'
 
 # create addresses
 to_address = easypost.Address.create(
@@ -38,9 +38,9 @@ try:
     weight = 21.2
   )
 except easypost.Error as e:
-  print e.message
+  print(e)
   if e.param != None:
-    print 'Specifically an invalid param: ' + e.param
+    print('Specifically an invalid param: ' + e.param)
 
 try:
   parcel = easypost.Parcel.create(
@@ -89,5 +89,5 @@ shipment.buy(rate = shipment.lowest_rate(['USPS', 'ups'], 'priorityMAILInternati
 # shipment.refund()
 # print shipment.refund_status
 
-print shipment.tracking_code
-print shipment.postage_label.label_url
+print(shipment.tracking_code)
+print(shipment.postage_label.label_url)
