@@ -19,18 +19,18 @@ parcel = easypost.Parcel.create(
 )
 
 # # populate order_list from db, csv, etc.
-# order_list = [{
-#   'customer': {
-#     'name': "Jon Calhoun",
-#     'street1': "388 Townsend St",
-#     'street2': "Apt 30",
-#     'city': "San Francisco",
-#     'state': "CA",
-#     'zip': "94107",
-#     'phone': "415-456-7890"
-#   },
-#   'order_number': '1234567890'
-# }]
+order_list = [{
+  'customer': {
+    'name': "Jon Calhoun",
+    'street1': "388 Townsend St",
+    'street2': "Apt 30",
+    'city': "San Francisco",
+    'state': "CA",
+    'zip': "94107",
+    'phone': "415-456-7890"
+  },
+  'order_number': '1234567890'
+}]
 
 shipments = []
 
@@ -75,4 +75,4 @@ batch = easypost.Batch.create_and_buy(shipment = shipments)
 # # later to look for the batch.label_url!
 # batch = easypost.Batch.retrieve('batch_XXXXXXXX')
 
-print batch
+print(batch)

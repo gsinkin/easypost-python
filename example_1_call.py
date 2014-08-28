@@ -60,4 +60,4 @@ shipment = easypost.Shipment.create(
 # print shipment.rates
 shipment.buy(rate = shipment.lowest_rate())
 
-print shipment
+print(shipment)
